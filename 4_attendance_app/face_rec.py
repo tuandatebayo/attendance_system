@@ -147,7 +147,7 @@ class RegistrationForm:
     
     def save_data_redis(self, name, role):
         #validate sample
-        if name is None:
+        if name is not None:
             if name.strip() != '':
                 key = f'{name}@{role}'
             else:
@@ -165,7 +165,8 @@ class RegistrationForm:
         X_array = X_array.reshape(receive_samples,512)
         X_array = np.asarray(X_array)
         #calculate mean
-        X_mean = np.mean(X_array, axis=1)
+        X_mean = X_array.mean(axis=0)
+        X_mean = X_mean.astype(np.float32)
         X_mean_bytes = X_mean.tobytes()
         #save to redis 
         r.hset(name='academy:register',key = key, value = X_mean_bytes)
